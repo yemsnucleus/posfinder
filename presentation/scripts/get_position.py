@@ -16,7 +16,7 @@ def run(opt):
 	estimated_pos = gaussian_model(med_frame, 
 								   init_pos=os.path.join(opt.data, 'init_guess.toml'))
 
-	plot_frame(med_frame, pos=estimated_pos)
+	# plot_frame(med_frame, pos=estimated_pos)
 
 
 if __name__ == '__main__':
