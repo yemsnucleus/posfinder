@@ -70,6 +70,7 @@ def collapse_to_median(lambda_cube, q=None, save=None, overwrite=False, imlib='o
         median_frame: A numpy array of the median (W x H)s
     """
     if save is not None and not overwrite:
+        print('[INFO] Loading pre-computed median frame')
         outfile = os.path.join(save, 'median_frame.npy')
         if os.path.isfile(outfile):
             median_frame = np.load(outfile)
@@ -86,7 +87,7 @@ def collapse_to_median(lambda_cube, q=None, save=None, overwrite=False, imlib='o
                 interpolation=interpolation)
         median_frame[i] = np.median(cube, 0)
 
-    if save is not None and overwrite:
+    if save is not None:
         print('[INFO] Saving median frame')
         outfile = os.path.join(save, 'median_frame.npy')
         np.save(outfile, median_frame)

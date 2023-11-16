@@ -28,14 +28,19 @@ def gaussian_model(lambda_frame, cropsize=30, init_pos=None):
 
         planet_frame = cut_patch(frame, x=posx, y=posy, cropsize=cropsize)
 
+        
+
         fit = fit_2dgaussian(planet_frame, 
                              crop=False, 
                              debug=False, 
                              full_output=True)
-        dx = float(fit.fwhm_x.iloc[0])
-        dy = float(fit.fwhm_y.iloc[0])
 
-        positions[i][0] = posx +   
-        positions[i][1] = 
+        dx = float(fit.centroid_x.iloc[0])
+        dy = float(fit.centroid_y.iloc[0])
+
+        # plot_frame([planet_frame], pos=[[dx, dy]])
+
+        positions[i][0] =  dx + (posx - dx)
+        positions[i][1] =  dy + (posy - dy)
 
     return positions
