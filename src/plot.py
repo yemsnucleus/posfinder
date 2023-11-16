@@ -8,8 +8,11 @@ def plot_frame(frame, ax=None, n_frames=None):
 	if ax is None:
 		fig, axes = plt.subplots(1, n_frames)
 
-	axes = axes.flatten()
-	
+	try:
+		axes = axes.flatten()
+	except:
+		axes = [axes]
+
 	for index, f in enumerate(frame):
 		axes[index].imshow(frame[index], origin='lower')
 		axes[index].set_title('{}-frame'.format(index))

@@ -92,3 +92,21 @@ def collapse_to_median(lambda_cube, q=None, save=None, overwrite=False, imlib='o
         np.save(outfile, median_frame)
 
     return median_frame
+
+def cut_patch(frame, x, y, cropsize):
+    """ Cut patch centered in (x,y) of size 'cropsize'
+    
+    Args:
+        frame (np.array): image to cut
+        x (float): x-coordinate
+        y (float): y-coordinate
+        cropsize (int): dimension of the output patch
+    
+    Returns:
+        np.array: patch
+    """
+    x = int(x)
+    y = int(y)
+    frame_size = frame.shape
+    frame = frame[y-cropsize//2:y+cropsize//2, x-cropsize//2:x+cropsize//2]
+    return frame

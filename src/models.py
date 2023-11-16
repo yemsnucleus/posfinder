@@ -2,7 +2,8 @@ import numpy as np
 import toml
 
 from vip_hci.var import fit_2dgaussian
-from src.hci import get_positions
+from src.hci import get_positions, cut_patch
+from src.plot import plot_frame
 
 def gaussian_model(lambda_frame, cropsize=30, init_pos=None):
     """
@@ -24,8 +25,17 @@ def gaussian_model(lambda_frame, cropsize=30, init_pos=None):
                                    init_conf['sep']['values'][i], 
                                    init_conf['theta']['values'][i])
 
-        fit = fit_2dgaussian(frame, crop=True, cropsize=cropsize, debug=False, full_output=True)
-        positions[i][0] = float(fit.fwhm_x.iloc[0]) 
-        positions[i][1] = float(fit.fwhm_y.iloc[0])
+
+        planet_frame = cut_patch(frame, x=posx, y=posy, cropsize=cropsize)
+
+        fit = fit_2dgaussian(planet_frame, 
+                             crop=False, 
+                             debug=False, 
+                             full_output=True)
+        dx = float(fit.fwhm_x.iloc[0])
+        dy = float(fit.fwhm_y.iloc[0])
+
+        positions[i][0] = posx +   
+        positions[i][1] = 
 
     return positions

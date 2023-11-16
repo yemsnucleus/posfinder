@@ -13,8 +13,6 @@ def run(opt):
 								   save=opt.data,
 								   overwrite=False)
 
-	# plot_frame(med_frame)
-
 	estimated_pos = gaussian_model(med_frame, 
 								   init_pos=os.path.join(opt.data, 'init_guess.toml'))
 
