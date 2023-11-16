@@ -7,7 +7,7 @@ import os, sys
 import pandas as pd
 
 DATADIR  = sys.argv[1]
-TARGDIR  = './data/records/'
+TARGDIR  = './results/eta_tel_b/'
 
 try:
     NRUNS = int(sys.argv[2])
@@ -21,9 +21,6 @@ for model in ['gauss']:
         print('[INFO] Running {}-trial on {} model'.format(run, model))
         command1 = root.format(DATADIR, TARGDIR, model)
         try:
-            # subprocess.call(command1, shell=True)
-            process = subprocess.run(command1, check=True, shell=True, stdout=subprocess.PIPE)
-            output = process.stdout.decode()
-            print(output)
+            subprocess.call(command1, shell=True)
         except Exception as e:
             print(e)
