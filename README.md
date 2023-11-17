@@ -40,7 +40,7 @@ name   = "separation"
 values = [344.35538038, 344.35538038] 
 
 [theta]
-name   = "parallactic_angles"
+name   = "angles"
 values = [257.24436263, 257.24436263]
 
 [flux]
