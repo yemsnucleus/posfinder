@@ -4,7 +4,7 @@ import time
 import os
 
 from src.hci import load_fits, collapse_to_median
-from src.models import gaussian_model
+from src.models import gaussian_model, gauss_tf_model
 from src.plot import plot_frame
 from datetime import datetime
 
@@ -18,12 +18,17 @@ def run(opt):
 									   q=data['parallactic'],
 									   save=opt.data,
 									   overwrite=False)
-
-	estimated_pos = gaussian_model(med_frame, 
-								   init_pos=os.path.join(opt.data, 'init_guess.toml'))
+	if opt.model == 'gauss_tf':
+		print('[INFO] Gaussian Tensorflow Model')
+		estimated_pos = gauss_tf_model(med_frame, 
+									   init_pos=os.path.join(opt.data, 'init_guess.toml'))
+	if opt.model == 'gauss':	
+		estimated_pos = gaussian_model(med_frame, 
+									   init_pos=os.path.join(opt.data, 'init_guess.toml'))
 
 	end_time = time.time()
 	elapsed_time = end_time - start_time
+
 	# plot_frame(med_frame, pos=estimated_pos)
 
 	os.makedirs(opt.target, exist_ok=True)
@@ -60,7 +65,7 @@ if __name__ == '__main__':
 	parser.add_argument('--reduce', default='median', type=str,
 				help='Reducing technique to be applied')
 	parser.add_argument('--model', default='gauss', type=str,
-				help='Model to use')
+				help='Model to use (gauss, gauss_tf)')
 	
 
 	opt = parser.parse_args()        
