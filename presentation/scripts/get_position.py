@@ -4,10 +4,9 @@ import time
 import os
 
 from src.hci import load_fits, collapse_to_median
-from src.models import gaussian_model, gauss_tf_model
+from src.models import gaussian_model, gauss_tf_model, brightest_point
 from src.plot import plot_frame
 from datetime import datetime
-
 
 def run(opt):
 
@@ -24,6 +23,10 @@ def run(opt):
 									   init_pos=os.path.join(opt.data, 'init_guess.toml'))
 	if opt.model == 'gauss':	
 		estimated_pos = gaussian_model(med_frame, 
+									   init_pos=os.path.join(opt.data, 'init_guess.toml'))
+
+	if opt.model == 'max':	
+		estimated_pos = brightest_point(med_frame, 
 									   init_pos=os.path.join(opt.data, 'init_guess.toml'))
 
 	end_time = time.time()
@@ -47,13 +50,16 @@ def run(opt):
 					  'date': formatted_time})
 
 	file_position = os.path.join(opt.target, 'pos.csv')
+	
 	df_pos = pd.DataFrame(rows)
 	if os.path.isfile(file_position):
 		restored = pd.read_csv(file_position)
-		df_pos = pd.concat([restored, df_pos], ignore_index=True)
+		df_pos = pd.concat([restored, df_pos], ignore_index=False)
 	
+	df_pos['x'] = df_pos.x.map('{:.10f}'.format)
+	df_pos['y'] = df_pos.y.map('{:.10f}'.format)
+
 	df_pos.to_csv(file_position, index=False)
-	print(df_pos)
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()

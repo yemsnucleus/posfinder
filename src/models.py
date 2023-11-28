@@ -1,9 +1,15 @@
 import tensorflow as tf
 import numpy as np
+import imutils
 import toml
+import cv2
 
-from vip_hci.var import fit_2dgaussian
+from imutils import contours
+from skimage import measure
+
 from src.hci import get_positions, cut_patch
+from vip_hci.var import fit_2dgaussian
+from scipy.optimize import curve_fit
 from src.plot import plot_frame
 
 @tf.function
@@ -96,5 +102,55 @@ def gaussian_model(lambda_frame, cropsize=30, init_pos=None):
 
         positions[i][0] =  dx + (posx - dx)
         positions[i][1] =  dy + (posy - dy)
+
+    return positions
+
+def brightest_point(lambda_frame, cropsize=30, init_pos=None):
+    """
+    For each wavelenght fit a Gaussian and calculate its center.
+    The frame is supposed to be the median frame from the cube
+    Args:
+        lambda_frame (numpy array): A cube containing the frames for each wavelenght (n_wavelenght x W x H).
+        cropsize (int, optional): The subset cut where the Gaussian is optimized.
+    """
+
+    if init_pos is not None:
+        with open(init_pos, 'r') as f:
+            init_conf = toml.load(f)
+            print(init_conf['sep']['values'])
+
+    frame_size = lambda_frame.shape
+    positions = np.zeros([frame_size[0], 2], dtype='float64')
+    for i, frame in enumerate(lambda_frame):
+        posx, posy = get_positions(lambda_frame, 
+                                   init_conf['sep']['values'][i], 
+                                   init_conf['theta']['values'][i])
+
+
+        planet_frame = cut_patch(frame, x=posx, y=posy, cropsize=cropsize)    
+
+        gray = cv2.cvtColor(np.tile(planet_frame[...,None], [1,1,3]), cv2.COLOR_BGR2GRAY)
+        gray = cv2.normalize(gray, np.zeros_like(gray), 0, 255, cv2.NORM_MINMAX)
+        blurred = cv2.GaussianBlur(gray, (11, 11), 0)
+        thresh = cv2.threshold(blurred, 30, blurred.max(), cv2.THRESH_BINARY)[1]
+        thresh = np.array(thresh, np.uint8)
+
+        cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = imutils.grab_contours(cnts)
+        cnts = contours.sort_contours(cnts)[0]
+
+        for (i, c) in enumerate(cnts):
+            # draw the bright spot on the image
+            (x, y, w, h) = cv2.boundingRect(c)
+            ((cX, cY), radius) = cv2.minEnclosingCircle(c)
+
+        positions[i][0] =  cX + (posx - cX)
+        positions[i][1] =  cY + (posy - cY)
+
+        import matplotlib.pyplot as plt
+        plt.figure()
+        plt.imshow(thresh)
+        plt.scatter(cX, cY, marker='.', color='r')
+        plt.show()
 
     return positions
