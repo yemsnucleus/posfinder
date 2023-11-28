@@ -13,7 +13,7 @@ def plot_frame(frame, ax=None, n_frames=None, pos=None):
 	except:
 		axes = [axes]
 
-	for index, f in enumerate(frame):
+	for index in range(n_frames):
 		axes[index].imshow(frame[index], origin='lower')
 		axes[index].set_title('{}-frame'.format(index))
 

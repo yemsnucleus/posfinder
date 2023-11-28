@@ -78,7 +78,6 @@ def gaussian_model(lambda_frame, cropsize=30, init_pos=None):
     if init_pos is not None:
         with open(init_pos, 'r') as f:
             init_conf = toml.load(f)
-            print(init_conf['sep']['values'])
 
     frame_size = lambda_frame.shape
     positions = np.zeros([frame_size[0], 2])
