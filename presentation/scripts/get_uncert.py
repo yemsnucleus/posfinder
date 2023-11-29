@@ -16,7 +16,7 @@ except:
 
 root = 'python -m presentation.scripts.get_position --data {} --target {} --model {}'
 
-for model in ['gauss_tf', 'gauss']:
+for model in ['gauss_tf', 'gauss', 'max', 'fbf']:
     for run in range(NRUNS):
         print('[INFO] Running {}-trial on {} model'.format(run, model))
         command1 = root.format(DATADIR, TARGDIR, model)

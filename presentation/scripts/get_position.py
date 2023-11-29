@@ -43,10 +43,19 @@ def run(opt):
 
 
 		estimated_pos = []
-		for curr_frame in np.transpose(derot_cube, [1, 0, 2, 3]):
+		for curr_frame in np.transpose(derot_cube, [1, 0, 2, 3]):			
 			pos_array = gaussian_model(curr_frame, 
-									   cropsize=50,
+									   cropsize=10,
 									   init_pos=os.path.join(opt.data, 'init_guess.toml'))
+
+			# print(pos_array)
+			# import matplotlib.pyplot as plt 
+			# plt.figure(dpi=300)
+			# plt.title('{}'.format(pos_array))
+			# plt.imshow(curr_frame[0])
+			# plt.scatter(pos_array[0, 0], pos_array[0, 1], s=1, marker='x', color='red')
+			# plt.show()
+
 			estimated_pos.append(pos_array)
 
 		estimated_pos = np.array(estimated_pos, dtype='float64')

@@ -61,8 +61,8 @@ def gauss_tf_model(lambda_frame, cropsize=30, init_pos=None):
                 optimizer.apply_gradients(zip(gradients,trainable_vars))
         
 
-        positions[i][0] =  mean[0].numpy() + (posx - mean[0].numpy())
-        positions[i][1] =  mean[1].numpy() + (posy - mean[1].numpy())
+        positions[i][0] =  (posx - cropsize/2) + mean[0].numpy()
+        positions[i][1] =  (posy - cropsize/2) + mean[1].numpy()
 
     return positions
 
@@ -99,8 +99,8 @@ def gaussian_model(lambda_frame, cropsize=30, init_pos=None):
 
         # plot_frame([planet_frame], pos=[[dx, dy]])
 
-        positions[i][0] =  dx + (posx - dx)
-        positions[i][1] =  dy + (posy - dy)
+        positions[i][0] =  (posx - cropsize/2) + dx
+        positions[i][1] =  (posy - cropsize/2) + dy
 
     return positions
 
@@ -138,18 +138,18 @@ def brightest_point(lambda_frame, cropsize=30, init_pos=None):
         cnts = imutils.grab_contours(cnts)
         cnts = contours.sort_contours(cnts)[0]
 
-        for (i, c) in enumerate(cnts):
+        for (_, c) in enumerate(cnts):
             # draw the bright spot on the image
             (x, y, w, h) = cv2.boundingRect(c)
             ((cX, cY), radius) = cv2.minEnclosingCircle(c)
 
-        positions[i][0] =  cX + (posx - cX)
-        positions[i][1] =  cY + (posy - cY)
+        positions[i][0] =  (posx - cropsize/2) + cX 
+        positions[i][1] =  (posy - cropsize/2) + cY 
 
-        import matplotlib.pyplot as plt
-        plt.figure()
-        plt.imshow(thresh)
-        plt.scatter(cX, cY, marker='.', color='r')
-        plt.show()
+        # import matplotlib.pyplot as plt
+        # plt.figure()
+        # plt.imshow(thresh)
+        # plt.scatter(cX, cY, marker='.', color='r')
+        # plt.show()
 
     return positions
